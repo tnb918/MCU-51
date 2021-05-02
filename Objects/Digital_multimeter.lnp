@@ -1,0 +1,3 @@
+".\Objects\Digital_multimeter.obj" 
+TO ".\Objects\Digital_multimeter" 
+PRINT(".\Listings\Digital_multimeter.m51")

@@ -1,0 +1,433 @@
+C51 COMPILER V9.57.0.0   DIGITAL_MULTIMETER                                                06/18/2020 14:15:29 PAGE 1   
+
+
+C51 COMPILER V9.57.0.0, COMPILATION OF MODULE DIGITAL_MULTIMETER
+OBJECT MODULE PLACED IN .\Objects\Digital_multimeter.obj
+COMPILER INVOKED BY: E:\Keil\Keil5\C51\BIN\C51.EXE Digital_multimeter.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRIN
+                    -T(.\Listings\Digital_multimeter.lst) TABS(2) OBJECT(.\Objects\Digital_multimeter.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include <string.h>
+   3          #include <intrins.h>
+   4          #define uchar unsigned char
+   5          #define uint unsigned int
+   6          sbit RS=P2^0;//0-指令，1-数据
+   7          sbit RW=P2^1;//0-写，1-读
+   8          sbit E=P2^2;
+   9          sbit oe=P2^3;
+  10          sbit eoc=P2^4;
+  11          sbit start=P2^5;
+  12          sbit X1=P2^6;
+  13          sbit X2=P2^7;
+  14          sbit X3=P3^0;
+  15          sbit X4=P3^1;
+  16          sbit P3_4=P3^4;
+  17          sbit ADD1=P3^5;
+  18          sbit ADD2=P3^6;
+  19          sbit ADD3=P3^7;
+  20          
+  21          uchar flag1=0;//测量类型标志位
+  22          uchar flag2=0;//测量档位标志位
+  23          
+  24          unsigned long temp,tempz;
+  25          
+  26          void delay(uchar cnt)   //延时子程序
+  27          {
+  28   1        unsigned int i;
+  29   1        while(cnt--)
+  30   1        {
+  31   2          for(i=0;i<250;i++)
+  32   2          {
+  33   3            _nop_();_nop_();_nop_();_nop_();
+  34   3          }
+  35   2        }
+  36   1      }
+  37          
+  38          /**************************************
+  39          LCD忙信号检测，忙返回1，不忙返回0，写操作前调用此函数
+  40          **************************************/
+  41          bit Check_Busy()
+  42          {
+  43   1        bit result;
+  44   1        uchar temp; 
+  45   1        P0=0xff;
+  46   1        RS=0;
+  47   1        RW=1;
+  48   1        E=1;
+  49   1        temp=P0;  
+  50   1        E=0;
+  51   1        result=(bit)(temp&0x80);//最高位为1表示正忙
+  52   1        return result;
+  53   1      }
+  54          /**************************************
+C51 COMPILER V9.57.0.0   DIGITAL_MULTIMETER                                                06/18/2020 14:15:29 PAGE 2   
+
+  55          LCD数据写入函数
+  56          **************************************/
+  57          void Data_Write(uchar dataz)
+  58          {
+  59   1        while(Check_Busy());
+  60   1        RS=1;
+  61   1        RW=0;
+  62   1        P0=dataz;
+  63   1        E=1;
+  64   1        E=0;  //产生下降沿
+  65   1      }
+  66          
+  67          
+  68          /**************************************
+  69          LCD指令写入函数
+  70          **************************************/
+  71          void Comd_Write(uchar comd)
+  72          {
+  73   1        while(Check_Busy());
+  74   1        RS=0;
+  75   1        RW=0;
+  76   1        P0=comd;
+  77   1        E=1;
+  78   1        E=0;
+  79   1      
+  80   1      }
+  81          
+  82          /**************************************
+  83          LCD初始化函数
+  84          **************************************/
+  85          void Init_LCD()
+  86          {
+  87   1        RS=0;
+  88   1        E=0;
+  89   1        Comd_Write(0x38);    //设置16x2显示，5x7点阵，8位数据接口
+  90   1        Comd_Write(0x0c);    //开显示，不显示光标，不闪烁
+  91   1        Comd_Write(0x06);    //读或写完一个字符后地址指针和光标加一，整屏显示不移动
+  92   1        Comd_Write(0x01);    //数据指针清零，显示清零
+  93   1      }
+  94          
+  95          
+  96          /**************************************
+  97          LCD显示函数
+  98          **************************************/
+  99          void Display_LCD(uchar x,uchar y,uchar *str)
+ 100          {
+ 101   1        uchar addr;
+ 102   1        if(x==1)
+ 103   1        {
+ 104   2          addr=0x80+y;//第一行y位置显示
+ 105   2        }
+ 106   1        else
+ 107   1        {
+ 108   2          addr=0x80+0x40+y;//第二行y位置显示
+ 109   2        }
+ 110   1        Comd_Write(addr);//从addr位置开始写
+ 111   1        while(*str!='\0')
+ 112   1        {
+ 113   2          Data_Write(*str++);
+ 114   2        }
+ 115   1      }
+ 116          
+C51 COMPILER V9.57.0.0   DIGITAL_MULTIMETER                                                06/18/2020 14:15:29 PAGE 3   
+
+ 117          
+ 118          
+ 119          uchar code table1[]="value= 0000.00V";
+ 120          uchar data table2[]="value= 0000.00V";
+ 121          uchar code table3[]="value= 00.000 A";
+ 122          uchar data table4[]="value= 00.000 A";
+ 123          uchar code table5[]="value= 00.000 K";
+ 124          uchar data table6[]="value= 00.000 K";
+ 125          uchar code bank[]="                ";//清空显示屏某一行
+ 126          uchar err=0;//错误标志
+ 127          
+ 128          /***********************报警函数***********************/
+ 129          void ERROR()
+ 130          {
+ 131   1        err=1;
+ 132   1      }
+ 133          /***********************计算实际值***********************/
+ 134          void cal(uchar times)
+ 135          {
+ 136   1        if(flag1==0)
+ 137   1        {
+ 138   2          strcpy(table2,table1);//清空原数据
+ 139   2          temp=tempz;//防止数据变化（可有可无）
+ 140   2          temp=temp*times*500*1.0/255;//电压放大100倍便于显示，计算
+ 141   2          table2[8]=temp/10000%10+48; //万  
+ 142   2          table2[9]=temp/1000%10+48;  //千  
+ 143   2          table2[10]=temp/100%10+48;  //百  
+ 144   2          table2[12]=temp/10%10+48;   //十
+ 145   2          table2[13]=temp%10+48;      //个      
+ 146   2        }
+ 147   1        if(flag1==1)
+ 148   1        {
+ 149   2          strcpy(table4,table3);
+ 150   2          temp=tempz;
+ 151   2          temp=temp*50000*1.0/(255*times);//电压放大10000倍
+ 152   2          table4[8]=temp/10000%10+48; 
+ 153   2          table4[10]=temp/1000%10+48; 
+ 154   2          table4[11]=temp/100%10+48;  
+ 155   2          table4[12]=temp/10%10+48; 
+ 156   2        }
+ 157   1        if(flag1==2)
+ 158   1        {
+ 159   2          strcpy(table6,table5);
+ 160   2          temp=tempz;
+ 161   2          temp=temp*1.0/(255-temp)*times*500;
+ 162   2          table6[7]=temp/10000%10+48;     
+ 163   2          table6[8]=temp/1000%10+48;  
+ 164   2          table6[10]=temp/100%10+48;  
+ 165   2          table6[11]=temp/10%10+48; 
+ 166   2          table6[12]=temp%10+48;    
+ 167   2        }
+ 168   1      }
+ 169          /***********************结果显示函数**********************/
+ 170          void display()
+ 171          {
+ 172   1        /***********************测电压***********************/
+ 173   1        if(flag1==0)
+ 174   1        {
+ 175   2          if(flag2==0)
+ 176   2          {           
+ 177   3            Display_LCD(1,0,"(0-5V)V_MEA:   "); 
+ 178   3            cal(1);
+C51 COMPILER V9.57.0.0   DIGITAL_MULTIMETER                                                06/18/2020 14:15:29 PAGE 4   
+
+ 179   3            err=0;
+ 180   3            if(temp>=500)
+ 181   3            {ERROR();}
+ 182   3          }
+ 183   2          if(flag2==1)
+ 184   2          {       
+ 185   3            Display_LCD(1,0,"(5-50V)V_MEA:  ");
+ 186   3            cal(10);
+ 187   3            err=0;
+ 188   3            if(temp>=5000)
+ 189   3            {ERROR();}      
+ 190   3          }
+ 191   2          if(flag2==2)
+ 192   2          {     
+ 193   3            Display_LCD(1,0,"(50-500V)V_MEA:");
+ 194   3            cal(100);
+ 195   3            err=0;
+ 196   3            if(temp>=50000)
+ 197   3            {ERROR();}      
+ 198   3          }
+ 199   2          if(err==1)
+ 200   2          {
+ 201   3            Display_LCD(2,0,bank);
+ 202   3            Display_LCD(2,0,"OVER RANGE!");
+ 203   3            delay(10);
+ 204   3            X1=0;X2=0;X3=0;X4=1;
+ 205   3          }
+ 206   2          else
+ 207   2          {
+ 208   3            Display_LCD(2,0,table2);
+ 209   3            delay(10);
+ 210   3          }
+ 211   2        }
+ 212   1        
+ 213   1        /***********************测电流***********************/  
+ 214   1        if(flag1==1)
+ 215   1        {
+ 216   2          if(flag2==0)
+ 217   2          {         
+ 218   3            //Display_LCD(1,0,bank);  
+ 219   3            Display_LCD(1,0,"(0-50mA)A_MEA:  ");  
+ 220   3            cal(100);
+ 221   3            err=0;
+ 222   3            if(temp>=500)
+ 223   3            {ERROR();}
+ 224   3          }
+ 225   2          if(flag2==1)
+ 226   2          {
+ 227   3            //Display_LCD(1,0,bank);        
+ 228   3            Display_LCD(1,0,"(50-500mA)A_MEA:");
+ 229   3            cal(10);
+ 230   3            err=0;
+ 231   3            if(temp>=5000)
+ 232   3            {ERROR();}      
+ 233   3          }
+ 234   2          if(flag2==2)
+ 235   2          {
+ 236   3            //Display_LCD(1,0,bank);        
+ 237   3            Display_LCD(1,0,"(0.5-5A)A_MEA:  ");
+ 238   3            cal(1);
+ 239   3            err=0;
+ 240   3            if(temp>=50000)
+C51 COMPILER V9.57.0.0   DIGITAL_MULTIMETER                                                06/18/2020 14:15:29 PAGE 5   
+
+ 241   3            {ERROR();}      
+ 242   3          }
+ 243   2          if(err==1)
+ 244   2          {
+ 245   3            Display_LCD(2,0,bank);
+ 246   3            Display_LCD(2,0,"OVER RANGE!");
+ 247   3            delay(1);
+ 248   3            X1=0;X2=0;X3=0;X4=1;
+ 249   3          }
+ 250   2          else
+ 251   2          {
+ 252   3            //Display_LCD(2,0,bank);
+ 253   3            Display_LCD(2,0,table4);
+ 254   3            delay(10);
+ 255   3          }   
+ 256   2        }
+ 257   1      
+ 258   1        /***********************测电阻***********************/  
+ 259   1        if(flag1==2)
+ 260   1        {
+ 261   2          if(flag2==0)
+ 262   2          {         
+ 263   3            //Display_LCD(1,0,bank);  
+ 264   3            Display_LCD(1,0,"(0-500)R_MEA:   ");  
+ 265   3            cal(1);
+ 266   3            err=0;
+ 267   3            if(temp>=500)
+ 268   3            {ERROR();}
+ 269   3          }
+ 270   2          if(flag2==1)
+ 271   2          {
+ 272   3            //Display_LCD(1,0,bank);        
+ 273   3            Display_LCD(1,0,"(0.5-5K)R_MEA:  ");
+ 274   3            cal(10);
+ 275   3            err=0;
+ 276   3            if(temp>=5000)
+ 277   3            {ERROR();}      
+ 278   3          }
+ 279   2          if(flag2==2)
+ 280   2          {
+ 281   3            //Display_LCD(1,0,bank);        
+ 282   3            Display_LCD(1,0,"(5-50K)R_MEA:   ");
+ 283   3            cal(100);
+ 284   3            err=0;
+ 285   3            if(temp>=50000)
+ 286   3            {ERROR();}      
+ 287   3          }
+ 288   2          if(err==1)
+ 289   2          {
+ 290   3            Display_LCD(2,0,bank);
+ 291   3            Display_LCD(2,0,"OVER RANGE!");
+ 292   3            delay(1);
+ 293   3            X1=0;X2=0;X3=0;X4=1;
+ 294   3          }
+ 295   2          else
+ 296   2          {
+ 297   3            //Display_LCD(2,0,bank);
+ 298   3            Display_LCD(2,0,table6);
+ 299   3            delay(10);
+ 300   3          }   
+ 301   2        } 
+ 302   1      }
+C51 COMPILER V9.57.0.0   DIGITAL_MULTIMETER                                                06/18/2020 14:15:29 PAGE 6   
+
+ 303          
+ 304          
+ 305          /***********************AD转换函数**********************/
+ 306          void A_D()
+ 307          {
+ 308   1        start=0;
+ 309   1        oe=0;
+ 310   1        start=1;
+ 311   1        start=0;
+ 312   1        delay(1);
+ 313   1        if(eoc==1)//AD转换结束
+ 314   1        {
+ 315   2          oe=1;
+ 316   2          temp=P1;
+ 317   2          tempz=temp;
+ 318   2          oe=0;
+ 319   2          display();//LCD屏幕显示
+ 320   2          start=1;
+ 321   2          start=0;
+ 322   2        }
+ 323   1      }
+ 324          
+ 325          
+ 326          void int0() interrupt 0 //外部0中断 切换测量类型
+ 327          { 
+ 328   1        flag1++;
+ 329   1        if(flag1==3) flag1=0;
+ 330   1        flag2=0;err=0;X4=0;
+ 331   1      }
+ 332          
+ 333          
+ 334          void int1() interrupt 2 //外部1中断 切换测量档位
+ 335          { 
+ 336   1        flag2++;
+ 337   1        if(flag2==3) flag2=0;err=0;X4=0;
+ 338   1      }
+ 339          
+ 340          
+ 341          void main()
+ 342          {
+ 343   1        Init_LCD();//LCD初始化
+ 344   1        X1=0;X2=0;X3=0;X4=0;
+ 345   1        ADD1=0;ADD2=0;ADD3=0;
+ 346   1        EA=1;//开中断总开关
+ 347   1        EX1=1;//允许外部1中断
+ 348   1        EX0=1;//允许外部0中断
+ 349   1        IT1=1;
+ 350   1        IT0=1;//负跳沿产生中断
+ 351   1        Display_LCD(1,0," Welcome To Use ");
+ 352   1        Display_LCD(2,0,"  This Product  ");  
+ 353   1        delay(1000);
+ 354   1        while(1)
+ 355   1        { 
+ 356   2          if(err==0)
+ 357   2          {
+ 358   3            switch(flag1)
+ 359   3            {
+ 360   4              case 0:ADD1=0,ADD2=0,ADD3=0;break;//选IN0
+ 361   4              case 1:ADD1=1,ADD2=0,ADD3=0;break;//选IN1
+ 362   4              case 2:ADD1=0,ADD2=1,ADD3=0;break;//选IN2
+ 363   4            }             
+ 364   3            switch(flag2)
+C51 COMPILER V9.57.0.0   DIGITAL_MULTIMETER                                                06/18/2020 14:15:29 PAGE 7   
+
+ 365   3            {
+ 366   4              case 0:X1=1,X2=0,X3=0;break;//档位1
+ 367   4              case 1:X1=0,X2=1,X3=0;break;//档位2
+ 368   4              case 2:X1=0,X2=0,X3=1;break;//档位3
+ 369   4            }
+ 370   3            delay(10);      
+ 371   3            A_D();
+ 372   3          } 
+ 373   2          if(P3_4==0)
+ 374   2          {                     //第一次检测到按键信息
+ 375   3            delay(10);          //延时约10ms，消除抖动
+ 376   3            if(P3_4==0)
+ 377   3            {                   //第二次检测到按键信息 
+ 378   4              if(X4==1){
+ 379   5                switch(flag1)
+ 380   5                {
+ 381   6                  case 0:ADD1=0,ADD2=0,ADD3=0;break;//选IN0
+ 382   6                  case 1:ADD1=1,ADD2=0,ADD3=0;break;//选IN1
+ 383   6                  case 2:ADD1=0,ADD2=1,ADD3=0;break;//选IN2
+ 384   6                }             
+ 385   5                switch(flag2)
+ 386   5                {
+ 387   6                  case 0:X1=1,X2=0,X3=0;break;//档位1
+ 388   6                  case 1:X1=0,X2=1,X3=0;break;//档位2
+ 389   6                  case 2:X1=0,X2=0,X3=1;break;//档位3
+ 390   6                }
+ 391   5                delay(10);
+ 392   5                A_D();X4=0;}
+ 393   4              while(P3_4==0);   //等待按键释放
+ 394   4            }
+ 395   3          }
+ 396   2        }
+ 397   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1851    ----
+   CONSTANT SIZE    =    261    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     59       4
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
