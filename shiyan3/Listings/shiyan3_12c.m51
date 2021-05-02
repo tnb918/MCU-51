@@ -1,0 +1,84 @@
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    04/23/2020  21:15:37  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
+E:\KEIL\KEIL5\C51\BIN\BL51.EXE .\Objects\shiyan3_12.obj TO .\Objects\shiyan3_12c PRINT (.\Listings\shiyan3_12c.m51)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\shiyan3_12.obj (SHIYAN3_12)
+  E:\KEIL\KEIL5\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  .\Objects\shiyan3_12c (SHIYAN3_12)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     001CH     UNIT         ?PR?MAIN?SHIYAN3_12
+            CODE    001FH     000CH     UNIT         ?C_C51STARTUP
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\shiyan3_12c (SHIYAN3_12)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?SHIYAN3_12
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\shiyan3_12c (SHIYAN3_12)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        SHIYAN3_12
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  B:0090H.0       PUBLIC        P1_0
+  C:0003H         PUBLIC        main
+  D:0089H         PUBLIC        TMOD
+  B:0088H.5       PUBLIC        TF0
+  D:008CH         PUBLIC        TH0
+  D:008AH         PUBLIC        TL0
+  B:0088H.4       PUBLIC        TR0
+  -------         PROC          MAIN
+  C:0003H         LINE#         6
+  C:0003H         LINE#         7
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  04/23/2020  21:15:37  PAGE 2
+
+
+  C:0003H         LINE#         8
+  C:0006H         LINE#         9
+  C:0008H         LINE#         10
+  C:000BH         LINE#         11
+  C:000EH         LINE#         12
+  C:0010H         LINE#         13
+  C:0010H         LINE#         14
+  C:0010H         LINE#         15
+  C:0013H         LINE#         16
+  C:0013H         LINE#         17
+  C:0015H         LINE#         18
+  C:0017H         LINE#         19
+  C:001AH         LINE#         20
+  C:001DH         LINE#         21
+  C:001DH         LINE#         22
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        SHIYAN3_12
+
+Program Size: data=9.0 xdata=0 code=43
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

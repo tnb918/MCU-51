@@ -1,0 +1,89 @@
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    04/23/2020  21:15:04  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
+E:\KEIL\KEIL5\C51\BIN\BL51.EXE .\Objects\shiyan3_11.obj TO .\Objects\shiyan3_11c PRINT (.\Listings\shiyan3_11c.m51)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\shiyan3_11.obj (SHIYAN3_11)
+  E:\KEIL\KEIL5\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  .\Objects\shiyan3_11c (SHIYAN3_11)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     0008H                  *** GAP ***
+            CODE    000BH     0003H     ABSOLUTE     
+            CODE    000EH     0013H     UNIT         ?PR?MAIN?SHIYAN3_11
+            CODE    0021H     000CH     UNIT         ?C_C51STARTUP
+            CODE    002DH     0009H     UNIT         ?PR?TIMER0?SHIYAN3_11
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\shiyan3_11c (SHIYAN3_11)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?SHIYAN3_11
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\shiyan3_11c (SHIYAN3_11)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        SHIYAN3_11
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  B:00A8H.7       PUBLIC        EA
+  B:0090H.0       PUBLIC        P1_0
+  C:000EH         PUBLIC        main
+  D:0089H         PUBLIC        TMOD
+  B:00A8H.1       PUBLIC        ET0
+  D:008CH         PUBLIC        TH0
+  D:008AH         PUBLIC        TL0
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  04/23/2020  21:15:04  PAGE 2
+
+
+  C:002DH         PUBLIC        timer0
+  B:0088H.4       PUBLIC        TR0
+  -------         PROC          TIMER0
+  C:002DH         LINE#         6
+  C:002DH         LINE#         8
+  C:002FH         LINE#         9
+  C:0032H         LINE#         10
+  C:0035H         LINE#         11
+  -------         ENDPROC       TIMER0
+  -------         PROC          MAIN
+  C:000EH         LINE#         12
+  C:000EH         LINE#         13
+  C:000EH         LINE#         14
+  C:0011H         LINE#         15
+  C:0013H         LINE#         16
+  C:0016H         LINE#         17
+  C:0019H         LINE#         18
+  C:001BH         LINE#         19
+  C:001DH         LINE#         20
+  C:001FH         LINE#         21
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        SHIYAN3_11
+
+Program Size: data=9.0 xdata=0 code=46
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

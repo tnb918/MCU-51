@@ -1,0 +1,112 @@
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    04/09/2020  14:22:03  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
+E:\KEIL\KEIL5\C51\BIN\BL51.EXE .\Objects\shiyan1_3.obj TO .\Objects\shiyan1s PRINT (.\Listings\shiyan1s.m51)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\shiyan1_3.obj (SHIYAN1_3)
+  E:\KEIL\KEIL5\C51\LIB\C51S.LIB (?C_STARTUP)
+  E:\KEIL\KEIL5\C51\LIB\C51S.LIB (?C?COPY)
+
+
+LINK MAP OF MODULE:  .\Objects\shiyan1s (SHIYAN1_3)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0004H     UNIT         _DATA_GROUP_
+            IDATA   000CH     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     00F6H     UNIT         ?C?LIB_CODE
+            CODE    00F9H     004BH     UNIT         ?PR?MAIN?SHIYAN1_3
+            CODE    0144H     000DH     UNIT         ?PR?DELAY?SHIYAN1_3
+            CODE    0151H     000CH     UNIT         ?C_C51STARTUP
+            CODE    015DH     0004H     UNIT         ?CO?SHIYAN1_3
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\shiyan1s (SHIYAN1_3)
+
+
+SEGMENT                          DATA_GROUP 
+  +--> CALLED SEGMENT          START    LENGTH
+----------------------------------------------
+?C_C51STARTUP                  -----    -----
+  +--> ?PR?MAIN?SHIYAN1_3
+
+?PR?MAIN?SHIYAN1_3             0008H    0004H
+  +--> ?CO?SHIYAN1_3
+  +--> ?PR?DELAY?SHIYAN1_3
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\shiyan1s (SHIYAN1_3)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        SHIYAN1_3
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  C:0144H         PUBLIC        delay
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  04/09/2020  14:22:03  PAGE 2
+
+
+  C:00F9H         PUBLIC        main
+  C:015DH         SYMBOL        _?ix1000
+  -------         PROC          DELAY
+  -------         DO            
+  D:0007H         SYMBOL        i
+  D:0006H         SYMBOL        j
+  D:0005H         SYMBOL        k
+  -------         ENDDO         
+  C:0144H         LINE#         2
+  C:0144H         LINE#         3
+  C:0144H         LINE#         5
+  C:0146H         LINE#         6
+  C:0148H         LINE#         7
+  C:014AH         LINE#         8
+  C:014CH         LINE#         9
+  -------         ENDPROC       DELAY
+  -------         PROC          MAIN
+  -------         DO            
+  D:0002H         SYMBOL        i
+  D:0082H         SYMBOL        j
+  D:0008H         SYMBOL        A
+  D:0004H         SYMBOL        a
+  -------         ENDDO         
+  C:00F9H         LINE#         11
+  C:00F9H         LINE#         12
+  C:00F9H         LINE#         14
+  C:010CH         LINE#         15
+  C:010CH         LINE#         16
+  C:010CH         LINE#         17
+  C:010FH         LINE#         18
+  C:010FH         LINE#         19
+  C:0115H         LINE#         20
+  C:0118H         LINE#         21
+  C:0118H         LINE#         22
+  C:011CH         LINE#         23
+  C:011FH         LINE#         24
+  C:0125H         LINE#         25
+  C:0125H         LINE#         26
+  C:0129H         LINE#         27
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        SHIYAN1_3
+
+  -------         MODULE        ?C?COPY
+  C:00D3H         PUBLIC        ?C?COPY
+  -------         ENDMOD        ?C?COPY
+
+Program Size: data=13.0 xdata=0 code=353
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

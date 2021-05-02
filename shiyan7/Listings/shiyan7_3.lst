@@ -1,0 +1,46 @@
+C51 COMPILER V9.57.0.0   SHIYAN7_3                                                         05/26/2020 17:00:48 PAGE 1   
+
+
+C51 COMPILER V9.57.0.0, COMPILATION OF MODULE SHIYAN7_3
+OBJECT MODULE PLACED IN .\Objects\shiyan7_3.obj
+COMPILER INVOKED BY: E:\Keil\Keil5\C51\BIN\C51.EXE shiyan7_3.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listi
+                    -ngs\shiyan7_3.lst) TABS(2) OBJECT(.\Objects\shiyan7_3.obj)
+
+line level    source
+
+   1          //12MHz 78ms 
+   2          #include <reg51.h>
+   3          unsigned int num=0;
+   4          void time1() interrupt 3 //定时器/计数器T1溢出中断
+   5          {
+   6   1        num++;
+   7   1        if(num<=128) P1++;
+   8   1        else P1--;
+   9   1        if(num==382) 
+  10   1        {num=0;P1=127;}
+  11   1      }
+  12          void main()
+  13          {
+  14   1        TMOD=0x20;//写入方式控制字
+  15   1        TH1=(256-204);//写入计数初值
+  16   1        TL1=(256-204);
+  17   1        EA=1;
+  18   1        ET1=1;//定时器1允许中断
+  19   1        TR1=1;//启动T1定时
+  20   1        P1=127;
+  21   1        while(1);
+  22   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     71    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

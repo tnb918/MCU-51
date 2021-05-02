@@ -1,0 +1,25 @@
+	AJMP MAIN			;跳至MAIN			
+	ORG 0100H			;指定地址				
+MAIN:MOV A,#00H			;给A赋值0			    
+	MOV DPTR,#1000H		;充当片外指针		
+	MOV R7,#49			;循环次数			
+LOOP1:MOVX @DPTR,A		;将A中值传到片外1000H		
+	INC A				;A+1		
+	INC DPTR			;DPTR+1				
+	DJNZ R7,LOOP1		;循环49次，填入数据			
+	MOV DPTR,#1000H		;充当片外指针	
+	MOV R0,#30H			;充当片内地址指针		
+	MOV R7,#49			;循环次数	
+LOOP2:MOVX A,@DPTR		;将片外1000H数据传入A				
+	MOV @R0,A			;将A中数据传入片内30H				
+	INC R0				;R0+1				
+	INC DPTR			;DPTR+1				
+	DJNZ R7,LOOP2		;循环49次，copy	
+	MOV A,#00H			;给A赋值0			    
+	MOV DPTR,#1000H		;充当片外指针		
+	MOV R7,#49			;循环次数		
+LOOP3:MOVX @DPTR,A		;将片外1000H清零						
+	INC DPTR			;DPTR+1				
+	DJNZ R7,LOOP3		;循环49次，清空片外数据			
+	SJMP $;				;死循环					
+	END;				;结束

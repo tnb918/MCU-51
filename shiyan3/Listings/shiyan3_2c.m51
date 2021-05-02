@@ -1,0 +1,100 @@
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    04/23/2020  22:28:03  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
+E:\KEIL\KEIL5\C51\BIN\BL51.EXE .\Objects\shiyan3_2.obj TO .\Objects\shiyan3_2c PRINT (.\Listings\shiyan3_2c.m51)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\shiyan3_2.obj (SHIYAN3_2)
+  E:\KEIL\KEIL5\C51\LIB\C51S.LIB (?C_STARTUP)
+  E:\KEIL\KEIL5\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\shiyan3_2c (SHIYAN3_2)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0003H     UNIT         ?DT?SHIYAN3_2
+            IDATA   000BH     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0013H     UNIT         ?PR?MAIN?SHIYAN3_2
+                    0016H     0005H                  *** GAP ***
+            CODE    001BH     0003H     ABSOLUTE     
+            CODE    001EH     008CH     UNIT         ?C_C51STARTUP
+            CODE    00AAH     001EH     UNIT         ?PR?TIME1?SHIYAN3_2
+            CODE    00C8H     000AH     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\shiyan3_2c (SHIYAN3_2)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?SHIYAN3_2
+  +--> ?C_INITSEG
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\shiyan3_2c (SHIYAN3_2)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        SHIYAN3_2
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:00A0H         PUBLIC        P2
+  B:00A8H.7       PUBLIC        EA
+  D:0008H         PUBLIC        period
+  B:00A0H.0       PUBLIC        P2_0
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  04/23/2020  22:28:03  PAGE 2
+
+
+  D:0009H         PUBLIC        high
+  C:0003H         PUBLIC        main
+  D:000AH         PUBLIC        time
+  D:0089H         PUBLIC        TMOD
+  B:00A8H.3       PUBLIC        ET1
+  D:008DH         PUBLIC        TH1
+  D:008BH         PUBLIC        TL1
+  B:0088H.6       PUBLIC        TR1
+  C:00AAH         PUBLIC        time1
+  -------         PROC          MAIN
+  C:0003H         LINE#         10
+  C:0003H         LINE#         11
+  C:0003H         LINE#         12
+  C:0006H         LINE#         13
+  C:0009H         LINE#         14
+  C:000CH         LINE#         15
+  C:000EH         LINE#         16
+  C:0010H         LINE#         17
+  C:0012H         LINE#         18
+  C:0014H         LINE#         19
+  -------         ENDPROC       MAIN
+  -------         PROC          TIME1
+  C:00AAH         LINE#         21
+  C:00AEH         LINE#         23
+  C:00B5H         LINE#         24
+  C:00B9H         LINE#         25
+  C:00BEH         LINE#         26
+  C:00BEH         LINE#         27
+  C:00C1H         LINE#         28
+  C:00C3H         LINE#         29
+  C:00C3H         LINE#         30
+  -------         ENDPROC       TIME1
+  -------         ENDMOD        SHIYAN3_2
+
+Program Size: data=12.0 xdata=0 code=205
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,51 @@
+A51 MACRO ASSEMBLER  SHIYAN3_11                                                           04/23/2020 21:22:26 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\shiyan3_11.obj
+ASSEMBLER INVOKED BY: E:\Keil\Keil5\C51\BIN\A51.EXE shiyan3_11.s SET(SMALL) DEBUG PRINT(.\Listings\shiyan3_11.lst) OBJEC
+                      T(.\Objects\shiyan3_11.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;f=12MHz，定时器/计势鱐0，方式1，实现从P1.0口输出周期为（20+作业号58）ms的方波。【中断方式】
+0000                   2             ORG 0000H
+0000 020100            3             LJMP MAIN         
+000B                   4             ORG 000BH
+000B 2111              5             AJMP SER_T0         
+0100                   6             ORG 0100H
+0100 758901            7     MAIN:MOV TMOD,#01H        
+0103 758C67            8          MOV TH0,#67H        
+0106 758AA8            9          MOV TL0,#0A8H
+0109 D2AF             10          SETB EA                
+010B D2A9             11          SETB ET0               
+010D D28C             12          SETB TR0               
+010F 80FE             13          JMP $                          
+0111 758C67           14     SER_T0:MOV TH0,#67H        
+0114 758AA8           15           MOV TL0,#0A8H
+0117 B290             16           CPL P1.0               
+0119 32               17               RETI
+                      18           END 
+A51 MACRO ASSEMBLER  SHIYAN3_11                                                           04/23/2020 21:22:26 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+EA . . . . . . . .  B ADDR   00A8H.7 A   
+ET0. . . . . . . .  B ADDR   00A8H.1 A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+SER_T0 . . . . . .  C ADDR   0111H   A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

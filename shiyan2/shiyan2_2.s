@@ -1,0 +1,28 @@
+	ORG 0000H
+	AJMP MAIN
+	ORG 0013H
+	AJMP SER_INT1
+	ORG 0030H
+MAIN:
+	MOV P1,#01H
+    SETB IT1
+	SETB EX1
+	SETB EA
+	SJMP $
+SER_INT1:
+	MOV A,P1
+	RL A
+	MOV P1,A
+	ACALL DELAY
+	RETI
+DELAY:MOV R2,#65 			;R2赋值65
+D1:MOV R3,#40				;R3赋值40
+D2:MOV R4,#16				;R4赋值16
+D3:NOP						;空操作
+	NOP						;空操作
+	NOP						;空操作
+	DJNZ R4,D3				;循环16次
+	DJNZ R3,D2				;循环40次
+	DJNZ R2,D1				;循环65次
+    RET						;返回
+END

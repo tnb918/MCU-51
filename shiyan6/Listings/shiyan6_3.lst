@@ -1,0 +1,140 @@
+C51 COMPILER V9.57.0.0   SHIYAN6_3                                                         05/26/2020 23:13:49 PAGE 1   
+
+
+C51 COMPILER V9.57.0.0, COMPILATION OF MODULE SHIYAN6_3
+OBJECT MODULE PLACED IN .\Objects\shiyan6_3.obj
+COMPILER INVOKED BY: E:\Keil\Keil5\C51\BIN\C51.EXE shiyan6_3.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listi
+                    -ngs\shiyan6_3.lst) TABS(2) OBJECT(.\Objects\shiyan6_3.obj)
+
+line level    source
+
+   1          //12MHz 秒表
+   2          #include <reg51.h>
+   3          sbit P2_0=P2^0;
+   4          sbit P2_1=P2^1;
+   5          sbit P2_2=P2^2;
+   6          sbit P2_3=P2^3;
+   7          sbit P2_4=P2^4;
+   8          sbit P2_5=P2^5;
+   9          sbit dot=P1^7;
+  10          unsigned char code table[]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f};
+  11          unsigned char d1=0,d2=0,d3=0,d4=0;
+  12          unsigned int time=0;
+  13          unsigned int num=0;
+  14          
+  15          void delay(unsigned char cnt)   //延时子程序
+  16          {
+  17   1        unsigned int i;
+  18   1        do
+  19   1        {
+  20   2          for(i=0;i<165;i++);
+  21   2        }while(--cnt);
+  22   1      }
+  23          
+  24          void time1() interrupt 3 //定时器/计数器T1溢出中断
+  25          {
+  26   1        time++;
+  27   1        if(time==4000)
+  28   1        {
+  29   2          if(d4++==9)
+  30   2          {
+  31   3            d4=0;
+  32   3            if(d3++==5)
+  33   3            {
+  34   4              d3=0;d4=0;
+  35   4              if(d2++==9)
+  36   4              {
+  37   5                d2=0;
+  38   5                if(d1++==5)
+  39   5                {
+  40   6                  d1=0,d2=0,d3=0,d4=0;
+  41   6                }
+  42   5              }
+  43   4            }
+  44   3          }
+  45   2        time=0;
+  46   2        }
+  47   1      }
+  48          
+  49          void display(void)
+  50          { 
+  51   1        P2&=0xf0;   //关断位选信号
+  52   1        P1=table[d1]; //送显示数据
+  53   1        P2_0=1;   //选中第一个数码管
+  54   1        delay(2);   //延时
+C51 COMPILER V9.57.0.0   SHIYAN6_3                                                         05/26/2020 23:13:49 PAGE 2   
+
+  55   1        P2&=0xf0;     //关断位选信号
+  56   1        P1=table[d2]; //送显示数据
+  57   1        dot=1;      //显示小数点
+  58   1        P2_1=1; ;   //选中第二个数码管
+  59   1        delay(2);   //延时
+  60   1        P2&=0xf0;   //关断位选信号
+  61   1        P1=table[d3]; //送显示数据
+  62   1        P2_2=1;   //选中第三个数码管
+  63   1        delay(2);   //延时
+  64   1        P2&=0xf0;     //关断位选信号
+  65   1        P1=table[d4]; //送显示数据
+  66   1        P2_3=1; ;   //选中第四个数码管
+  67   1        delay(2);   //延时
+  68   1        P1=0;   //关段码
+  69   1        P2&=0xf0; //关位码
+  70   1      }
+  71          
+  72          main()
+  73          {
+  74   1        TMOD=0x20;//写入方式控制字
+  75   1        TH1=(256-250);//写入计数初值
+  76   1        TL1=(256-250);
+  77   1        EA=1;//开中断总开关
+  78   1        ET1=1;//定时器1允许中断
+  79   1        while(1)
+  80   1        {
+  81   2          /********************启动/暂停功能********************/
+  82   2          if(P2_4==0)
+  83   2          {                     //第一次检测到按键信息
+  84   3            delay(30);          //延时约20ms，消除抖动
+  85   3            if(P2_4==0)
+  86   3            {                   //第二次检测到按键信息
+  87   4              if(num%2==0)
+  88   4                TR1=1;//启动T1定时
+  89   4              else
+  90   4              TR1=0;//关闭T1定时
+  91   4              num++;
+  92   4              if(num==10) num=0;
+  93   4              while(P2_4==0)    //等待按键释放
+  94   4              {display();}
+  95   4            }
+  96   3          }
+  97   2          /**********************复位**********************/
+  98   2          if(P2_5==0)
+  99   2          {                     //第一次检测到按键信息
+ 100   3            delay(30);          //延时约20ms，消除抖动
+ 101   3            if(P2_5==0)
+ 102   3            {                   //第二次检测到按键信息
+ 103   4              d1=0;d2=0;d3=0;d4=0;
+ 104   4              TR1=0;
+ 105   4              num=0;
+ 106   4              while(P2_5==0)    //等待按键释放
+ 107   4              {display();}
+ 108   4            }
+ 109   3          }
+ 110   2          display();
+ 111   2        }
+ 112   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    285    ----
+C51 COMPILER V9.57.0.0   SHIYAN6_3                                                         05/26/2020 23:13:49 PAGE 3   
+
+   CONSTANT SIZE    =     10    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      8    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

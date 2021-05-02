@@ -1,0 +1,75 @@
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    04/09/2020  14:13:38  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
+E:\KEIL\KEIL5\C51\BIN\BL51.EXE .\Objects\shiyan1_3.obj TO .\Objects\shiyanHSs PRINT (.\Listings\shiyanHSs.m51)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\shiyan1_3.obj (SHIYAN1_3)
+
+
+LINK MAP OF MODULE:  .\Objects\shiyanHSs (SHIYAN1_3)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0134H     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\shiyanHSs (SHIYAN1_3)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        SHIYAN1_3
+  C:0126H         SYMBOL        D1
+  C:0128H         SYMBOL        D2
+  C:012AH         SYMBOL        D3
+  C:0124H         SYMBOL        DELAY
+  C:0106H         SYMBOL        LOOP1
+  C:010FH         SYMBOL        LOOP2
+  C:0100H         SYMBOL        MAIN
+  D:0090H         SYMBOL        P1
+  C:011DH         SYMBOL        Q
+  C:0000H         LINE#         2
+  C:0100H         LINE#         4
+  C:0102H         LINE#         5
+  C:0104H         LINE#         6
+  C:0106H         LINE#         7
+  C:0109H         LINE#         8
+  C:010AH         LINE#         9
+  C:010FH         LINE#         11
+  C:0111H         LINE#         12
+  C:0112H         LINE#         13
+  C:0114H         LINE#         14
+  C:0116H         LINE#         15
+  C:0117H         LINE#         16
+  C:0118H         LINE#         17
+  C:011BH         LINE#         18
+  C:011DH         LINE#         19
+  C:0120H         LINE#         20
+  C:0122H         LINE#         21
+  C:0124H         LINE#         22
+  C:0126H         LINE#         23
+  C:0128H         LINE#         24
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  04/09/2020  14:13:38  PAGE 2
+
+
+  C:012AH         LINE#         25
+  C:012BH         LINE#         26
+  C:012CH         LINE#         27
+  C:012DH         LINE#         28
+  C:012FH         LINE#         29
+  C:0131H         LINE#         30
+  C:0133H         LINE#         31
+  -------         ENDMOD        SHIYAN1_3
+
+Program Size: data=8.0 xdata=0 code=308
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,187 @@
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    05/07/2020  16:43:53  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
+E:\KEIL\KEIL5\C51\BIN\BL51.EXE .\Objects\shiyan3_3.obj TO .\Objects\shiyan3_3c PRINT (.\Listings\shiyan3_3c.m51)
+
+
+MEMORY MODEL: SMALL WITH FLOATING POINT ARITHMETIC
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\shiyan3_3.obj (SHIYAN3_3)
+  E:\KEIL\KEIL5\C51\LIB\C51FPS.LIB (?C?FPADD)
+  E:\KEIL\KEIL5\C51\LIB\C51FPS.LIB (?C?FPMUL)
+  E:\KEIL\KEIL5\C51\LIB\C51FPS.LIB (?C?FPCMP)
+  E:\KEIL\KEIL5\C51\LIB\C51FPS.LIB (?C?FCAST)
+  E:\KEIL\KEIL5\C51\LIB\C51FPS.LIB (?C?CASTF)
+  E:\KEIL\KEIL5\C51\LIB\C51FPS.LIB (?C?FPGETOPN)
+  E:\KEIL\KEIL5\C51\LIB\C51S.LIB (?C_STARTUP)
+  E:\KEIL\KEIL5\C51\LIB\C51S.LIB (?C?LNEG)
+  E:\KEIL\KEIL5\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\shiyan3_3c (SHIYAN3_3)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     000DH     UNIT         ?DT?SHIYAN3_3
+            IDATA   0015H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0003H     ABSOLUTE     
+                    0006H     000DH                  *** GAP ***
+            CODE    0013H     0003H     ABSOLUTE     
+                    0016H     0005H                  *** GAP ***
+            CODE    001BH     0003H     ABSOLUTE     
+            CODE    001EH     0344H     UNIT         ?C?LIB_CODE
+            CODE    0362H     008CH     UNIT         ?C_C51STARTUP
+            CODE    03EEH     0073H     UNIT         ?PR?INT1?SHIYAN3_3
+            CODE    0461H     0062H     UNIT         ?PR?MAIN?SHIYAN3_3
+            CODE    04C3H     002FH     UNIT         ?PR?TIME1?SHIYAN3_3
+            CODE    04F2H     0027H     UNIT         ?PR?INT0?SHIYAN3_3
+            CODE    0519H     0012H     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\shiyan3_3c (SHIYAN3_3)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?SHIYAN3_3
+  +--> ?C_INITSEG
+
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  05/07/2020  16:43:53  PAGE 2
+
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\shiyan3_3c (SHIYAN3_3)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        SHIYAN3_3
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  B:00A8H.7       PUBLIC        EA
+  D:0008H         PUBLIC        period
+  B:0090H.0       PUBLIC        P1_0
+  D:000AH         PUBLIC        high
+  C:0461H         PUBLIC        main
+  D:000CH         PUBLIC        time
+  D:0089H         PUBLIC        TMOD
+  B:00A8H.3       PUBLIC        ET1
+  B:00A8H.0       PUBLIC        EX0
+  B:0088H.0       PUBLIC        IT0
+  D:008DH         PUBLIC        TH1
+  B:00A8H.2       PUBLIC        EX1
+  B:0088H.2       PUBLIC        IT1
+  D:000EH         PUBLIC        num
+  D:008BH         PUBLIC        TL1
+  B:0088H.6       PUBLIC        TR1
+  C:04C3H         PUBLIC        time1
+  D:000FH         PUBLIC        i
+  D:0011H         PUBLIC        k
+  C:04F2H         PUBLIC        int0
+  C:03EEH         PUBLIC        int1
+  -------         PROC          TIME1
+  C:04C3H         LINE#         12
+  C:04C7H         LINE#         14
+  C:04D7H         LINE#         15
+  C:04DBH         LINE#         16
+  C:04E5H         LINE#         17
+  C:04E5H         LINE#         18
+  C:04EBH         LINE#         19
+  C:04EDH         LINE#         20
+  C:04EDH         LINE#         21
+  -------         ENDPROC       TIME1
+  -------         PROC          INT1
+  C:03EEH         LINE#         23
+  C:040BH         LINE#         25
+  C:0426H         LINE#         26
+  C:043AH         LINE#         27
+  C:0446H         LINE#         28
+  -------         ENDPROC       INT1
+  -------         PROC          INT0
+  C:04F2H         LINE#         30
+  C:04F6H         LINE#         32
+  C:0502H         LINE#         33
+  C:0504H         LINE#         34
+  C:0509H         LINE#         35
+  C:050CH         LINE#         36
+  C:0512H         LINE#         37
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  05/07/2020  16:43:53  PAGE 3
+
+
+  C:0514H         LINE#         38
+  -------         ENDPROC       INT0
+  -------         PROC          MAIN
+  C:0461H         LINE#         40
+  C:0461H         LINE#         41
+  C:0461H         LINE#         42
+  C:0464H         LINE#         43
+  C:0467H         LINE#         44
+  C:046AH         LINE#         45
+  C:046CH         LINE#         46
+  C:046EH         LINE#         47
+  C:0470H         LINE#         48
+  C:0472H         LINE#         49
+  C:0474H         LINE#         50
+  C:0476H         LINE#         51
+  C:0478H         LINE#         52
+  C:047AH         LINE#         53
+  C:047AH         LINE#         54
+  C:047AH         LINE#         55
+  C:0489H         LINE#         56
+  C:0489H         LINE#         57
+  C:0491H         LINE#         58
+  C:0499H         LINE#         59
+  C:04A1H         LINE#         60
+  C:04A7H         LINE#         61
+  C:04A7H         LINE#         62
+  C:04C1H         LINE#         63
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        SHIYAN3_3
+
+  -------         MODULE        ?C?FPADD
+  C:0025H         PUBLIC        ?C?FPADD
+  C:0021H         PUBLIC        ?C?FPSUB
+  -------         ENDMOD        ?C?FPADD
+
+  -------         MODULE        ?C?FPMUL
+  C:0116H         PUBLIC        ?C?FPMUL
+  -------         ENDMOD        ?C?FPMUL
+
+  -------         MODULE        ?C?FPCMP
+  C:021EH         PUBLIC        ?C?FPCMP
+  C:021CH         PUBLIC        ?C?FPCMP3
+  -------         ENDMOD        ?C?FPCMP
+
+  -------         MODULE        ?C?FCAST
+  C:029FH         PUBLIC        ?C?FCASTC
+  C:029AH         PUBLIC        ?C?FCASTI
+  C:0295H         PUBLIC        ?C?FCASTL
+  -------         ENDMOD        ?C?FCAST
+
+  -------         MODULE        ?C?CASTF
+  C:02D3H         PUBLIC        ?C?CASTF
+  -------         ENDMOD        ?C?CASTF
+
+  -------         MODULE        ?C?LNEG
+  C:0354H         PUBLIC        ?C?LNEG
+  -------         ENDMOD        ?C?LNEG
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  05/07/2020  16:43:53  PAGE 4
+
+
+
+Program Size: data=22.0 xdata=0 code=1305
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

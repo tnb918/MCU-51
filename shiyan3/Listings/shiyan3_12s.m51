@@ -1,0 +1,55 @@
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    04/23/2020  21:34:06  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
+E:\KEIL\KEIL5\C51\BIN\BL51.EXE .\Objects\shiyan3_12.obj TO .\Objects\shiyan3_12s PRINT (.\Listings\shiyan3_12s.m51)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\shiyan3_12.obj (SHIYAN3_12)
+
+
+LINK MAP OF MODULE:  .\Objects\shiyan3_12s (SHIYAN3_12)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     011AH     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\shiyan3_12s (SHIYAN3_12)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        SHIYAN3_12
+  C:010BH         SYMBOL        LOOP
+  C:0100H         SYMBOL        MAIN
+  C:0110H         SYMBOL        NEXT
+  D:0090H         SYMBOL        P1
+  B:0088H.5       SYMBOL        TF0
+  D:008CH         SYMBOL        TH0
+  D:008AH         SYMBOL        TL0
+  D:0089H         SYMBOL        TMOD
+  B:0088H.4       SYMBOL        TR0
+  C:0000H         LINE#         3
+  C:0100H         LINE#         5
+  C:0103H         LINE#         6
+  C:0106H         LINE#         7
+  C:0109H         LINE#         8
+  C:010BH         LINE#         9
+  C:010EH         LINE#         10
+  C:0110H         LINE#         11
+  C:0113H         LINE#         12
+  C:0116H         LINE#         13
+  C:0118H         LINE#         14
+  -------         ENDMOD        SHIYAN3_12
+
+Program Size: data=8.0 xdata=0 code=282
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
