@@ -1,0 +1,3 @@
+".\Objects\ECL.obj" 
+TO ".\Objects\ECL" 
+PRINT(".\Listings\ECL.m51")

@@ -1,0 +1,503 @@
+C51 COMPILER V9.57.0.0   ECL                                                               08/15/2020 18:13:17 PAGE 1   
+
+
+C51 COMPILER V9.57.0.0, COMPILATION OF MODULE ECL
+OBJECT MODULE PLACED IN .\Objects\ECL.obj
+COMPILER INVOKED BY: E:\Keil\Keil5\C51\BIN\C51.EXE ECL.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\EC
+                    -L.lst) OBJECT(.\Objects\ECL.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include <string.h>
+   3          #include <intrins.h>
+   4          #define uchar unsigned char
+   5          #define uint unsigned int
+   6          sbit RS=P2^0;//0-指令，1-数据
+   7          sbit RW=P2^1;//0-写，1-读
+   8          sbit E=P2^2;
+   9          sbit right=P2^3;//为1密码正确，灯亮，开锁
+  10          
+  11          uchar code table1[]="Input Password:";
+  12          uchar code table2[]="Password Error!";
+  13          uchar code table3[]="Unclock Success!";
+  14          uchar code table4[]="Old Password:";
+  15          uchar code table5[]="New Password:";
+  16          uchar code table6[]="Password digits";
+  17          uchar code table7[]="should >5";
+  18          uchar code table8[]="Change Success!";
+  19          
+  20          void delay(uchar cnt)           //延时子程序
+  21          {
+  22   1              uint i;
+  23   1              while(cnt--)
+  24   1              {
+  25   2                      for(i=0;i<250;i++)
+  26   2                      {
+  27   3                              _nop_();_nop_();_nop_();_nop_();
+  28   3                      }
+  29   2              }
+  30   1      }
+  31          
+  32          
+  33          /**************************************
+  34          LCD忙信号检测，忙返回1，不忙返回0，写操作前调用此函数
+  35          **************************************/
+  36          bit Check_Busy()
+  37          {
+  38   1              bit result;
+  39   1              uchar temp;     
+  40   1              P0=0xff;
+  41   1              RS=0;
+  42   1              RW=1;
+  43   1              E=1;
+  44   1              temp=P0;        
+  45   1              E=0;
+  46   1              result=(bit)(temp&0x80);//最高位为1表示正忙
+  47   1              return result;
+  48   1      }
+  49          
+  50          
+  51          /**************************************
+  52          LCD数据写入函数
+  53          **************************************/
+  54          void Data_Write(uchar dataz)
+C51 COMPILER V9.57.0.0   ECL                                                               08/15/2020 18:13:17 PAGE 2   
+
+  55          {
+  56   1              while(Check_Busy());
+  57   1              RS=1;
+  58   1              RW=0;
+  59   1              P0=dataz;
+  60   1              E=1;
+  61   1              E=0;    //产生下降沿
+  62   1      }
+  63          
+  64          
+  65          /**************************************
+  66          LCD指令写入函数
+  67          **************************************/
+  68          void Comd_Write(uchar comd)
+  69          {
+  70   1              while(Check_Busy());
+  71   1              RS=0;
+  72   1              RW=0;
+  73   1              P0=comd;
+  74   1              E=1;
+  75   1              E=0;
+  76   1      }
+  77          
+  78          /**************************************
+  79          LCD初始化函数
+  80          **************************************/
+  81          void Init_LCD()
+  82          {
+  83   1              RS=0;
+  84   1              E=0;
+  85   1              Comd_Write(0x38);    //设置16x2显示，5x7点阵，8位数据接口
+  86   1              Comd_Write(0x0c);    //开显示，不显示光标，不闪烁
+  87   1              Comd_Write(0x06);    //读或写完一个字符后地址指针和光标加一，整屏显示不移动
+  88   1              Comd_Write(0x01);    //数据指针清零，显示清零
+  89   1      }
+  90          
+  91          
+  92          /**************************************
+  93          LCD显示函数
+  94          **************************************/
+  95          void Display_LCD(uchar x,uchar y,uchar *str)
+  96          {
+  97   1              uchar addr;
+  98   1              //Init_LCD();
+  99   1              if(x==1)
+ 100   1              {
+ 101   2                      addr=0x80+y;//第一行y位置显示
+ 102   2              }
+ 103   1              else
+ 104   1              {
+ 105   2                      addr=0x80+0x40+y;//第二行y位置显示
+ 106   2              }
+ 107   1              //Comd_Write(0x02);
+ 108   1              Comd_Write(addr);//从addr位置开始写
+ 109   1              while(*str!='\0')
+ 110   1              {
+ 111   2                      Data_Write(*str++);
+ 112   2              }
+ 113   1      }
+ 114          
+ 115          
+ 116          /**************************************
+C51 COMPILER V9.57.0.0   ECL                                                               08/15/2020 18:13:17 PAGE 3   
+
+ 117          扫描4X4键盘函数
+ 118          **************************************/
+ 119          uchar scan()
+ 120          {
+ 121   1              uchar temp;
+ 122   1              while(1){
+ 123   2              P1=0xf0;
+ 124   2              temp=P1;
+ 125   2              if(temp!=0xf0)
+ 126   2              {
+ 127   3                      delay(30);
+ 128   3                      temp=P1;
+ 129   3                      if(temp!=0xf0)
+ 130   3                      {
+ 131   4                              /****************扫描第一行****************/
+ 132   4                              P1=0xfe;
+ 133   4                              temp=P1;
+ 134   4                              if((temp&0xf0)!=0xf0)
+ 135   4                              {
+ 136   5                                      switch(temp)
+ 137   5                                      {
+ 138   6                                              case 0xee:return '0';break;
+ 139   6                                              case 0xde:return '1';break;
+ 140   6                                              case 0xbe:return '2';break;
+ 141   6                                              case 0x7e:return '3';break;
+ 142   6                                              default:break;
+ 143   6                                      }
+ 144   5                              }
+ 145   4                              /****************扫描第二行****************/
+ 146   4                              P1=0xfd;
+ 147   4                              temp=P1;
+ 148   4                              if((temp&0xf0)!=0xf0)
+ 149   4                              {
+ 150   5                                      switch(temp)
+ 151   5                                      {
+ 152   6                                              case 0xed:return '4';break;
+ 153   6                                              case 0xdd:return '5';break;
+ 154   6                                              case 0xbd:return '6';break;
+ 155   6                                              case 0x7d:return '7';break;
+ 156   6                                              default:break;
+ 157   6                                      }
+ 158   5                              }
+ 159   4                              /****************扫描第三行****************/                            
+ 160   4                              P1=0xfb;
+ 161   4                              temp=P1;
+ 162   4                              if((temp&0xf0)!=0xf0)
+ 163   4                              {
+ 164   5                                      switch(temp)
+ 165   5                                      {
+ 166   6                                              case 0xeb:return '8';break;
+ 167   6                                              case 0xdb:return '9';break;
+ 168   6                                              case 0xbb:return 'a';break;
+ 169   6                                              case 0x7b:return 'b';break;
+ 170   6                                              default:break;
+ 171   6                                      }
+ 172   5                              }
+ 173   4                              /****************扫描第四行****************/                            
+ 174   4                              P1=0xf7;
+ 175   4                              temp=P1;
+ 176   4                              if((temp&0xf0)!=0xf0)
+ 177   4                              {
+ 178   5                                      switch(temp)
+C51 COMPILER V9.57.0.0   ECL                                                               08/15/2020 18:13:17 PAGE 4   
+
+ 179   5                                      {
+ 180   6                                              case 0xe7:return 'c';break;
+ 181   6                                              case 0xd7:return 'd';break;
+ 182   6                                              case 0xb7:return 'e';break;
+ 183   6                                              case 0x77:return 'f';break;
+ 184   6                                              default:break;
+ 185   6                                      }
+ 186   5                              }
+ 187   4                      }
+ 188   3                      //while(temp!=0xf0);
+ 189   3              }       
+ 190   2      }}
+ 191          
+ 192          uchar data password[17]={'1','1','1','1','1','1','1','1'};//存放原始密码（可改）
+ 193          uchar data passwordbf[17]={'1','1','1','1','1','1','1','1'};//存放原始密码（不可改）
+ 194          uchar data tem_password[17]={'\0'};//存放输入密码进行比较
+ 195          uchar data new_password[17]={'\0'};     //存放预修改密码
+ 196          uchar code bank[]="                ";//清空LCD某一行
+ 197          uchar data star[16];//存放*号
+ 198          /**************************************
+ 199          显示num个*数组函数
+ 200          **************************************/
+ 201          void stars(uchar num)
+ 202          {
+ 203   1              uchar i;
+ 204   1              memset(star,0,sizeof(star));
+ 205   1              for(i=0;i<num;i++)
+ 206   1              {
+ 207   2                      star[i]='*';
+ 208   2              }
+ 209   1      }
+ 210          
+ 211          /**************************************
+ 212          主函数
+ 213          **************************************/
+ 214          /*uchar code table1[]="Input Password:";
+ 215          uchar code table2[]="Password Error!";
+ 216          uchar code table3[]="Unclock Success!";
+ 217          uchar code table4[]="Old Password:";
+ 218          uchar code table5[]="New Password:";
+ 219          uchar code table6[]="Password digits";
+ 220          uchar code table7[]="should >5";
+ 221          uchar code table8[]="Change Success!";
+ 222          */
+ 223          
+ 224          void main()
+ 225          {
+ 226   1              uchar i;
+ 227   1              uchar time=1;
+ 228   1              uchar j=0,flag=0;
+ 229   1              uchar change=0;
+ 230   1              right=0;
+ 231   1              Init_LCD();//LCD初始化
+ 232   1              Display_LCD(1,0,table1);
+ 233   1              for(j=0;;)
+ 234   1              {
+ 235   2                      i=scan();//扫描键盘
+ 236   2                      /**************************密码输入**************************/
+ 237   2                      if(i>='0'&&i<='9'&&j<16)
+ 238   2                      {
+ 239   3                              if(change==0)
+ 240   3                              {
+C51 COMPILER V9.57.0.0   ECL                                                               08/15/2020 18:13:17 PAGE 5   
+
+ 241   4                                      tem_password[j]=i;
+ 242   4                              }
+ 243   3                              if(change==1)
+ 244   3                              {
+ 245   4                                      new_password[j]=i;
+ 246   4                              }       
+ 247   3                        if(change==2)
+ 248   3                              {
+ 249   4                                      password[j]=i;
+ 250   4                              }       
+ 251   3                              if(flag==0)
+ 252   3                              {//不显示数值，显示*号
+ 253   4                                      Display_LCD(2,j,"*");
+ 254   4                                delay(10);
+ 255   4                              }
+ 256   3                              else 
+ 257   3                              {//显示数值，用“&”传入函数参数
+ 258   4                                      Display_LCD(2,j,&i);
+ 259   4                                delay(10);
+ 260   4                              }
+ 261   3                              j++;
+ 262   3                      }
+ 263   2                      
+ 264   2                      /**************************确认输入密码完毕**************************/          
+ 265   2                      if(i=='a')
+ 266   2                      {
+ 267   3                              if(j<6)
+ 268   3                        {//密码位数小于6提示错误                              
+ 269   4                                      Comd_Write(0x01);                               
+ 270   4                                      Display_LCD(1,0,table6);
+ 271   4                                      Display_LCD(2,3,table7);
+ 272   4                                      delay(100);//报错延时           
+ 273   4                                      Comd_Write(0x01);
+ 274   4                                      Display_LCD(1,0,table1);
+ 275   4                                      change=0;
+ 276   4                                      j=0;time=1;//重新显示输入密码
+ 277   4                                      memset(tem_password,0,sizeof(tem_password));
+ 278   4                                      memset(new_password,0,sizeof(new_password));
+ 279   4                                      strcpy(password,passwordbf);//清空数据，密码置初值
+ 280   4                              }
+ 281   3                              if(j>=6)
+ 282   3                              {//密码位数必须大于等于六位
+ 283   4                                      if(change==0)
+ 284   4                                      {
+ 285   5                                              tem_password[j+1]='\0';//输入完毕
+ 286   5                                              if(strcmp(tem_password,password)==0)
+ 287   5                                              {//密码输入正确，灯亮一段时间，提示后返回输入密码界面
+ 288   6                                                      Comd_Write(0x01);
+ 289   6                                                      Display_LCD(1,0,table3);
+ 290   6                                                      right=1;
+ 291   6                                                      delay(1000);
+ 292   6                                                      right=0;
+ 293   6                                                      Comd_Write(0x01);
+ 294   6                                                      Display_LCD(1,0,table1);
+ 295   6                                                      j=0;time=1;
+ 296   6                                                      memset(tem_password,0,sizeof(tem_password));                                            
+ 297   6                                                      }
+ 298   5                                              else
+ 299   5                                              {//密码输入错误，提示后返回输入密码界面
+ 300   6                                                      Comd_Write(0x01);
+ 301   6                                                      Display_LCD(1,0,table2);
+ 302   6                                                      delay(1000);
+C51 COMPILER V9.57.0.0   ECL                                                               08/15/2020 18:13:17 PAGE 6   
+
+ 303   6                                                      Comd_Write(0x01);
+ 304   6                                                      Display_LCD(1,0,table1);                
+ 305   6                                                      j=0;time=1;
+ 306   6                                                memset(tem_password,0,sizeof(tem_password));                          
+ 307   6                                              }
+ 308   5                                      }
+ 309   4      
+ 310   4                                      if(change==2)
+ 311   4                                      {//密码修改成功，提示后返回输入密码界面
+ 312   5                                              password[j+1]='\0';
+ 313   5                                              Comd_Write(0x01);                               
+ 314   5                                              Display_LCD(1,0,table8);
+ 315   5                                              delay(1000);
+ 316   5                                              Comd_Write(0x01);                               
+ 317   5                                              Display_LCD(1,0,table1);
+ 318   5                                              delay(10);
+ 319   5                                              change=0;
+ 320   5                                              j=0;time=1;
+ 321   5                                      }
+ 322   4                                      if(change==1)
+ 323   4                                      {
+ 324   5                                              new_password[j+1]='\0';
+ 325   5                                              if(strcmp(new_password,password)==0)
+ 326   5                                              {//修改密码验证通过，进入设置新密码功能
+ 327   6                                                      Comd_Write(0x01);                               
+ 328   6                                                      Display_LCD(1,0,table5);
+ 329   6                                                      delay(1000);
+ 330   6                                                      j=0;time=1;
+ 331   6                                                      change=2;
+ 332   6                                                      memset(new_password,0,sizeof(new_password));            
+ 333   6                                                      memset(password,0,sizeof(password));                                            
+ 334   6                                              }
+ 335   5                                              else
+ 336   5                                              {//修改密码验证失败，提示后返回密码验证界面
+ 337   6                                                      Comd_Write(0x01);                               
+ 338   6                                                      Display_LCD(1,0,table2);
+ 339   6                                                      delay(1000);
+ 340   6                                                      Comd_Write(0x01);                               
+ 341   6                                                      Display_LCD(1,0,table4);
+ 342   6                                                      j=0;time=1;
+ 343   6                                                      memset(new_password,0,sizeof(new_password));    
+ 344   6                                              }                               
+ 345   5                                      }                               
+ 346   4                              }
+ 347   3      
+ 348   3                      }
+ 349   2                      
+ 350   2                      /**************************回车删除最后一位密码**************************/
+ 351   2                      if(i=='b')
+ 352   2                      {
+ 353   3                              if(j>0)
+ 354   3                              {                               
+ 355   4                                      j--;//清除最后一位数据
+ 356   4                                      if(change==0)
+ 357   4                                      {
+ 358   5                                              tem_password[j]='\0';           
+ 359   5                                              delay(10);
+ 360   5                                      }
+ 361   4                                      if(change==1)
+ 362   4                                      {
+ 363   5                                              new_password[j]='\0';           
+ 364   5                                              delay(10);
+C51 COMPILER V9.57.0.0   ECL                                                               08/15/2020 18:13:17 PAGE 7   
+
+ 365   5                                      }                
+ 366   4                                      if(change==2)
+ 367   4                                      {
+ 368   5                                              password[j]='\0';               
+ 369   5                                              delay(10);
+ 370   5                                      }                                                               
+ 371   4                                      if(flag==1)
+ 372   4                                      {
+ 373   5                                              Display_LCD(2,0,bank);//清空LCD第二行数据
+ 374   5                                              if(change==0)//显示对应数组的元素
+ 375   5                                              {
+ 376   6                                                      Display_LCD(2,0,tem_password);
+ 377   6                                              }
+ 378   5                                              if(change==1)
+ 379   5                                              {
+ 380   6                                                      Display_LCD(2,0,new_password);
+ 381   6                                              }
+ 382   5                                              if(change==2)
+ 383   5                                              {
+ 384   6                                                      Display_LCD(2,0,password);
+ 385   6                                              }                                       
+ 386   5                                      }
+ 387   4                                      if(flag==0)
+ 388   4                                      {
+ 389   5                                              stars(j);
+ 390   5                                              Display_LCD(2,0,bank);//清空LCD第二行数据
+ 391   5                                              Display_LCD(2,0,star);//显示j个*
+ 392   5                                      }
+ 393   4                                      /*
+ 394   4                                      Comd_Write(0x10);//光标左移1格，地址值减 1
+ 395   4                                      Data_Write(' ');//通过显示空白实现删除最后一个“*”
+ 396   4                                      Comd_Write(0x10);
+ 397   4                                      */
+ 398   4                              }       
+ 399   3                      }
+ 400   2                      
+ 401   2                      /**************************显示/隐藏密码**************************/
+ 402   2                      if(i=='c')
+ 403   2                      {
+ 404   3                              if(time%2==1)
+ 405   3                              {
+ 406   4                                      if(change==0)
+ 407   4                                      {
+ 408   5                                              Display_LCD(2,0,tem_password);                  
+ 409   5                                              delay(10);
+ 410   5                                      }
+ 411   4                                      if(change==1)
+ 412   4                                      {
+ 413   5                                              Display_LCD(2,0,new_password);                  
+ 414   5                                              delay(10);
+ 415   5                                      }
+ 416   4                                      if(change==2)
+ 417   4                                      {
+ 418   5                                              Display_LCD(2,0,password);                      
+ 419   5                                              delay(10);
+ 420   5                                      }
+ 421   4                                      flag=1; //显示密码                      
+ 422   4                              }
+ 423   3                              else
+ 424   3                              {
+ 425   4                                      stars(j);
+ 426   4                                      Display_LCD(2,0,bank);//清空LCD第二行数据
+C51 COMPILER V9.57.0.0   ECL                                                               08/15/2020 18:13:17 PAGE 8   
+
+ 427   4                                      Display_LCD(2,0,star);//显示j个*
+ 428   4                                      delay(10);
+ 429   4                                      flag=0;//不显示密码
+ 430   4                              }
+ 431   3                              time++; 
+ 432   3                              if(time==10) time=0;
+ 433   3                      }
+ 434   2                      
+ 435   2                      /**************************取消键*************************/             
+ 436   2                      if(i=='d')
+ 437   2                      {
+ 438   3                              if(change==0)
+ 439   3                              {
+ 440   4                                      memset(tem_password,0,sizeof(tem_password));//清空数组
+ 441   4                              }
+ 442   3                              if(change==1)
+ 443   3                              {
+ 444   4                                      memset(new_password,0,sizeof(new_password));//清空数组
+ 445   4                              }
+ 446   3                              if(change==2)
+ 447   3                              {
+ 448   4                                      memset(password,0,sizeof(password));//清空数组
+ 449   4                              }                       
+ 450   3                              Display_LCD(2,0,bank);
+ 451   3                              delay(10);
+ 452   3                              j=0;time=1;
+ 453   3                      }
+ 454   2                      
+ 455   2                      /**************************修改密码*************************/           
+ 456   2                      if(i=='e')
+ 457   2                      {
+ 458   3                              change=1;
+ 459   3                              Comd_Write(0x01);                               
+ 460   3                              Display_LCD(1,0,table4);
+ 461   3                              //delay(100);           
+ 462   3                              j=0;time=1;
+ 463   3                      }
+ 464   2              }
+ 465   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1318    ----
+   CONSTANT SIZE    =    138    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     84      10
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

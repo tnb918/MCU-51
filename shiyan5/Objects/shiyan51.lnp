@@ -1,4 +1,0 @@
-".\Objects\shiyan5_1.obj",
-".\Objects\shiyan5_2.obj" 
-TO ".\Objects\shiyan51" 
-PRINT(".\Listings\shiyan51.m51")

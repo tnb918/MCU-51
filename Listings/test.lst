@@ -1,0 +1,113 @@
+C51 COMPILER V9.57.0.0   TEST                                                              05/28/2020 20:11:38 PAGE 1   
+
+
+C51 COMPILER V9.57.0.0, COMPILATION OF MODULE TEST
+OBJECT MODULE PLACED IN .\Objects\test.obj
+COMPILER INVOKED BY: E:\Keil\Keil5\C51\BIN\C51.EXE test.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\t
+                    -est.lst) TABS(2) OBJECT(.\Objects\test.obj)
+
+line level    source
+
+   1          #include<reg52.h>
+   2          
+   3          #define LCD1602_DB P0
+   4          sbit LCD1602_RS=P2^0;
+   5          sbit LCD1602_RW=P2^1;
+   6          sbit LCD1602_E=P2^2;
+   7          
+   8          void InitLcd1602();
+   9          void LcdWriteCmd(unsigned char cmd);
+  10          void LcdWaitReady();
+  11          void LcdShowStr(unsigned char x,unsigned char y,unsigned char *str);
+  12          void LcdWriteDat(unsigned char dat);
+  13          void LcdSetCursor(unsigned char x,unsigned char y);
+  14          
+  15          void main()
+  16          {
+  17   1      unsigned char str[]="Hope the eqidemic";//显示的字符串
+  18   1      
+  19   1      InitLcd1602();//液晶初始化
+  20   1      LcdShowStr(0,0,str);//第一行显示
+  21   1      LcdShowStr(1,1,"will pass soon");//第二行显示
+  22   1      while(1);
+  23   1      }
+  24          
+  25          void InitLcd1602()//初始化函数
+  26          {
+  27   1      LcdWriteCmd(0x38);//显示模式设置
+  28   1      LcdWriteCmd(0x0c);//开显示，不显示光标
+  29   1      LcdWriteCmd(0x06);//指针加一，整屏不移动
+  30   1      LcdWriteCmd(0x01);//指针清零，显示清零
+  31   1      }
+  32          
+  33          void LcdWriteCmd(unsigned char cmd)//写入函数
+  34          {
+  35   1      LcdWaitReady();//忙位检测
+  36   1      //写指令
+  37   1      LCD1602_RS=0;
+  38   1      LCD1602_RW=0;
+  39   1      LCD1602_DB=cmd;
+  40   1      LCD1602_E=1;
+  41   1      LCD1602_E=0;
+  42   1      }
+  43          
+  44          void LcdWaitReady()
+  45          {
+  46   1      unsigned char sta;
+  47   1      
+  48   1      //读状态
+  49   1      LCD1602_DB=0XFF;
+  50   1      LCD1602_RS=0;
+  51   1      LCD1602_RW=1;
+  52   1      do{
+  53   2      LCD1602_E=1;
+  54   2      sta=LCD1602_DB;
+C51 COMPILER V9.57.0.0   TEST                                                              05/28/2020 20:11:38 PAGE 2   
+
+  55   2      LCD1602_E=0;//拉低使能引脚
+  56   2      }while(sta&0x80);//判断sta最高位是否为0
+  57   1      }
+  58          
+  59          void LcdShowStr(unsigned char x,unsigned char y,unsigned char *str)//显示函数
+  60          {
+  61   1      LcdSetCursor(x,y);
+  62   1      while(*str!='\0')
+  63   1      {
+  64   2      LcdWriteDat(*str++);
+  65   2      }
+  66   1      }
+  67          
+  68          void LcdWriteDat(unsigned char dat)
+  69          {
+  70   1      LcdWaitReady();
+  71   1      //写数据
+  72   1      LCD1602_RS=1;
+  73   1      LCD1602_RW=0;
+  74   1      LCD1602_DB=dat;
+  75   1      LCD1602_E=1;
+  76   1      LCD1602_E=0;
+  77   1      }
+  78          
+  79          void LcdSetCursor(unsigned char x,unsigned char y)//字符显示函数
+  80          {
+  81   1      unsigned char addr;
+  82   1      if(y==0)
+  83   1      addr=0x00+x;
+  84   1      else
+  85   1      addr=0x40+x;
+  86   1      LcdWriteCmd(addr|0x80);
+  87   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    180    ----
+   CONSTANT SIZE    =     33    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      23
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
